@@ -25,6 +25,11 @@ class Directory : public AFileItem{
 		
 		int64_t filesCount() override;
 		int64_t directoriesCount() override;
+		
+		int64_t childrenCount() override { return dirs.size() + files.size(); }
+		AFileItem& getChild( int index ) override;
+		
+		QString name() override { return directory.completeBaseName(); }
 };
 
 #endif

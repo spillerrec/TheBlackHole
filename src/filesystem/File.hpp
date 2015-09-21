@@ -17,6 +17,9 @@ class File : public AFileItem{
 		
 		int64_t filesCount() override { return 1; }
 		int64_t directoriesCount() override { return 0; }
+		int64_t childrenCount() override { return 1; }
+		AFileItem& getChild( int ) override { return *this; }
+		QString name() override { return info.completeBaseName(); }
 };
 
 #endif

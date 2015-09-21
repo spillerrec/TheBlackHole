@@ -47,3 +47,14 @@ int64_t Directory::directoriesCount(){
 	auto getDirCount = [](auto& obj){ return obj.directoriesCount(); };
 	return 1 + sumObj( dirs, getDirCount ) + sumObj( files, getDirCount );
 }
+
+AFileItem& Directory::getChild( int index ){
+	if( index < dirs.size() )
+		return dirs[index];
+	
+	index -= dirs.size();
+	if( index < files.size() )
+		return files[index];
+	
+	//TODO: throw
+}

@@ -3,12 +3,19 @@
 
 #include <cstdint>
 
+class QString;
+
 class AFileItem{
 	public:
 		virtual int64_t getTotalSize() = 0;
 	//	virtual bool deleteItem() = 0;
 		virtual int64_t filesCount() = 0;
 		virtual int64_t directoriesCount() = 0;
+		
+		virtual int64_t childrenCount() = 0;
+		virtual AFileItem& getChild( int index ) = 0;
+		
+		virtual QString name() = 0;
 		
 		virtual ~AFileItem() { };
 };
