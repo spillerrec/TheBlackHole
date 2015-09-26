@@ -10,3 +10,8 @@ DirView::DirView( QString path, QWidget* parent )
 	item.setRect( 0,0, width(), height() );
 	item.initChildren();
 }
+
+void DirView::resizeEvent( QResizeEvent* ) {
+	item.setRect( 0,0, width(), height() );
+	item.initChildren();
+}

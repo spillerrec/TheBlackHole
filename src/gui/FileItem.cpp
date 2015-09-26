@@ -12,7 +12,7 @@ FileItem::FileItem( AFileItem* file, QGraphicsItem* parent ) : QGraphicsRectItem
 }
 
 void FileItem::initChildren(){
-	//for( auto& child : children ) delete child; //TODO: release/remove objects?
+	for( auto& child : children ) delete child;
 	children.clear();
 	children.reserve( file->childrenCount() );
 	for( int i=0; i<file->childrenCount(); i++ )

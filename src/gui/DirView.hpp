@@ -15,6 +15,9 @@ class DirView : public QGraphicsView{
 		
 	public:
 		DirView( QString path, QWidget* parent=nullptr );
+		
+	protected:
+		void resizeEvent( class QResizeEvent* ) override;
 };
 
 #endif
