@@ -13,11 +13,13 @@ class DirView : public QGraphicsView{
 		Directory dir;
 		FileItem item;
 		
+		void updateScene();
+		
 	public:
 		DirView( QString path, QWidget* parent=nullptr );
 		
 	protected:
-		void resizeEvent( class QResizeEvent* ) override;
+		void resizeEvent( class QResizeEvent* ) override { updateScene(); }
 };
 
 #endif

@@ -7,11 +7,11 @@ DirView::DirView( QString path, QWidget* parent )
 	setScene(&scene);
 	
 	dir.update();
-	item.setRect( 0,0, width(), height() );
-	item.initChildren();
+	updateScene();
 }
 
-void DirView::resizeEvent( QResizeEvent* ) {
-	item.setRect( 0,0, width(), height() );
+void DirView::updateScene(){
+	scene.setSceneRect( 0,0, viewport()->width(), viewport()->height() );
+	item.setRect(       0,0, viewport()->width(), viewport()->height() );
 	item.initChildren();
 }
