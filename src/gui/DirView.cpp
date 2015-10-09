@@ -1,11 +1,14 @@
 #include "DirView.hpp"
 
-DirView::DirView( QString path, QWidget* parent )
-	: QGraphicsView(parent), scene(this), dir( nullptr, path ), item(&dir) {
+DirView::DirView( QWidget* parent )
+	: QGraphicsView(parent), scene(this), dir( nullptr, QFileInfo() ), item(&dir) {
 //	scene.setBackgroundBrush(Qt::blue);
 	scene.addItem( &item );
 	setScene(&scene);
-	
+}
+
+void DirView::setPath( QString path ){
+	dir = Directory( nullptr, path );
 	dir.update();
 	updateScene();
 }

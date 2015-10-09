@@ -5,20 +5,15 @@
 
 #include "filesystem/Directory.hpp"
 #include "gui/MainWindow.hpp"
-#include "gui/DirView.hpp"
 
 
 int main( int argc, char* argv[] ){
 	QApplication app( argc, argv );
+	
 	auto args = app.arguments();
+	auto folder = (args.size() < 2 ) ? "" : args[1];
 	
-	if( args.size() < 2 ){
-		qDebug() << "Insufficient arguments, specify folder to find";
-		return -1;
-	}
-	auto folder = args[1];
-	
-	DirView w( folder );
+	MainWindow w( folder );
 	w.show();
 	
 	/*
