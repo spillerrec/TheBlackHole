@@ -81,7 +81,7 @@ class Positioner{
 			{ return current_mass / double(total_mass) * area.width(); }
 			
 		double itemHeight( int64_t mass ) const
-			{ return area.height() * (mass / double(current_mass)); }
+			{ return mass / double(current_mass) * area.height(); }
 		
 		double currentFit(){
 			double fit = 0.0;
@@ -100,7 +100,6 @@ class Positioner{
 				progress += height;
 			}
 			current.setX( current.x() + width );
-			
 			
 			clear();
 		}
@@ -122,6 +121,7 @@ void FileItem::positionChildren(){
 	Positioner positioner( availableArea(), file->getTotalSize() );
 	for( auto& child : children )
 		positioner.addChild( child.get() );
+	positioner.commit();
 }
 
 int64_t FileItem::mass(){ return file->getTotalSize(); }
