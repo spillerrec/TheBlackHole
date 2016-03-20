@@ -23,6 +23,7 @@ class File : public AFileItem{
 		int64_t childrenCount() override { return 1; }
 		AFileItem& getChild( int ) override { return *this; }
 		QString name() override { return info.completeBaseName(); }
+		bool isFolder() const override{ return false; }
 };
 
 #endif

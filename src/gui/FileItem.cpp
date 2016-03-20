@@ -9,7 +9,8 @@
 #include <QGraphicsTextItem>
 
 FileItem::FileItem( AFileItem* file, QGraphicsItem* parent ) : QGraphicsRectItem(parent), file(file) {
-	setBrush( QBrush( QColor( 255,255,000, 128 ) ) );
+	auto color = file->isFolder() ? QColor( 255,255,000, 128 ) : QColor( 0,0,255, 128 );
+	setBrush( QBrush( color ) );
 	text = new QGraphicsTextItem( file->name(), this );
 	setFlags( QGraphicsItem::ItemClipsChildrenToShape );
 }

@@ -19,6 +19,7 @@ class AFileItem{
 		virtual AFileItem& getChild( int index ) = 0;
 		
 		virtual QString name() = 0;
+		virtual bool isFolder() const = 0;
 		
 		virtual ~AFileItem() { };
 };

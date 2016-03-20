@@ -33,6 +33,7 @@ class Directory : public AFileItem{
 		AFileItem& getChild( int index ) override;
 		
 		QString name() override { return directory.fileName(); }
+		bool isFolder() const override{ return true; }
 };
 
 #endif
