@@ -15,6 +15,10 @@ class FileItem : public QGraphicsRectItem{
 		
 		void positionChildren();
 		
+	protected:
+		virtual void hoverEnterEvent( QGraphicsSceneHoverEvent* ) override;
+		virtual void hoverLeaveEvent( QGraphicsSceneHoverEvent* ) override;
+		
 	public:
 		FileItem( AFileItem* file, QGraphicsItem* parent=nullptr );
 		int64_t mass();

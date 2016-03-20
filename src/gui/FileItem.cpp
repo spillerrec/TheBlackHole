@@ -6,12 +6,22 @@
 
 #include <QBrush>
 #include <QColor>
+#include <QPen>
 #include <QGraphicsTextItem>
 
 FileItem::FileItem( AFileItem* file, QGraphicsItem* parent ) : QGraphicsRectItem(parent), file(file) {
+	setAcceptHoverEvents( true );
 	auto color = file->isFolder() ? QColor( 255,255,000, 64 ) : QColor( 0,0,255, 128 );
 	setBrush( QBrush( color ) );
 	setFlags( QGraphicsItem::ItemClipsChildrenToShape );
+}
+
+void FileItem::hoverEnterEvent( QGraphicsSceneHoverEvent* ) {
+	setPen( QPen( QBrush(Qt::black), children.size()>0 ? 3.0 : 2.0 ) );
+}
+
+void FileItem::hoverLeaveEvent( QGraphicsSceneHoverEvent* ) {
+	setPen( QPen( QBrush(Qt::black), children.size()>0 ? 2.0 : 1.0 ) );
 }
 
 void FileItem::initChildren(){
@@ -43,6 +53,8 @@ void FileItem::setSize( QRectF new_size ){
 	}
 	else
 		children.clear();
+	
+	setPen( QPen( QBrush(Qt::black), children.size()>0 ? 2.0 : 1.0 ) );
 	positionChildren();
 }
 
