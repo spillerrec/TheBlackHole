@@ -18,6 +18,8 @@ class FileItem : public QGraphicsRectItem{
 		FileItem( AFileItem* file, QGraphicsItem* parent=nullptr );
 		int64_t mass();
 		void initChildren();
+		
+		void setSize( QRectF new_size );
 };
 
 #endif

@@ -24,6 +24,11 @@ void FileItem::initChildren(){
 	positionChildren();
 }
 
+void FileItem::setSize( QRectF new_size ){
+	setRect( new_size );
+	text->setPos( new_size.topLeft() );
+}
+
 
 class Positioner{
 	private:
@@ -67,7 +72,7 @@ class Positioner{
 			double progress = current.y();
 			for( auto file : column ){
 				auto height = itemHeight( file->mass() );
-				file->setRect( current.x(), progress, width, height );
+				file->setSize( {current.x(), progress, width, height} );
 				progress += height;
 			}
 			current.setX( current.x() + width );
