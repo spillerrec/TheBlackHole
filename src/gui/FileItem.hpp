@@ -11,7 +11,7 @@ class FileItem : public QGraphicsRectItem{
 	private:
 		class AFileItem* file;
 		std::vector<std::unique_ptr<FileItem>> children;
-		class QGraphicsTextItem* text;
+		class QGraphicsTextItem* text{ nullptr };
 		
 		void positionChildren();
 		

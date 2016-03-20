@@ -11,7 +11,6 @@
 FileItem::FileItem( AFileItem* file, QGraphicsItem* parent ) : QGraphicsRectItem(parent), file(file) {
 	auto color = file->isFolder() ? QColor( 255,255,000, 64 ) : QColor( 0,0,255, 128 );
 	setBrush( QBrush( color ) );
-	text = new QGraphicsTextItem( file->name(), this );
 	setFlags( QGraphicsItem::ItemClipsChildrenToShape );
 }
 
@@ -20,21 +19,35 @@ void FileItem::initChildren(){
 	children.reserve( file->childrenCount() );
 	for( int i=0; i<file->childrenCount(); i++ )
 		children.push_back( std::make_unique<FileItem>(&file->getChild(i), this) );
+	
+	auto biggest_first = [](auto& a, auto& b){ return a->mass() > b->mass(); };
+	std::sort( children.begin(), children.end(), biggest_first );
 }
 
 void FileItem::setSize( QRectF new_size ){
 	setRect( new_size );
-	text->setPos( new_size.topLeft() );
 	
-	if( new_size.width() * new_size.height() > 5000 )
-		initChildren();
+	if( new_size.height() > 20 ){
+		if( !text )
+			text = new QGraphicsTextItem( file->name(), this );
+		text->setPos( new_size.topLeft() );
+	}
+	else if( text ){
+		delete text;
+		text = nullptr;
+	}
+	
+	if( new_size.width() * new_size.height() > 5000 ){
+		if( children.size() == 0 )
+			initChildren();
+	}
 	else
 		children.clear();
 	positionChildren();
 }
 
 QRectF FileItem::availableArea() const{
-	auto reserved = text->boundingRect().height();
+	auto reserved = text ? text->boundingRect().height() : 0;
 	auto pos = QPointF( rect().left(), rect().top() + reserved );
 	auto size = QSizeF( rect().width(), rect().height() - reserved );
 	return QRectF( pos, size );
@@ -106,11 +119,6 @@ class Positioner{
 };
 
 void FileItem::positionChildren(){
-	text->setPos( rect().topLeft() );
-	
-	auto biggest_first = [](auto& a, auto& b){ return a->mass() > b->mass(); };
-	std::sort( children.begin(), children.end(), biggest_first );
-	
 	Positioner positioner( availableArea(), file->getTotalSize() );
 	for( auto& child : children )
 		positioner.addChild( child.get() );
