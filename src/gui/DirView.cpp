@@ -17,7 +17,6 @@ void DirView::setPath( QString path ){
 }
 
 void DirView::updateScene(){
-	scene.setSceneRect( 0,0, viewport()->width(), viewport()->height() );
-	item.setRect(       0,0, viewport()->width(), viewport()->height() );
-	item.initChildren();
+	scene.setSceneRect(  0,0, viewport()->width(), viewport()->height()  );
+	item.setSize(      { 0,0, viewport()->width(), viewport()->height() });
 }

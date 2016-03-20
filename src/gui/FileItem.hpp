@@ -5,11 +5,12 @@
 #define FILE_ITEM_HPP
 
 #include <QGraphicsRectItem>
+#include <memory>
 
 class FileItem : public QGraphicsRectItem{
 	private:
 		class AFileItem* file;
-		std::vector<FileItem*> children;
+		std::vector<std::unique_ptr<FileItem>> children;
 		class QGraphicsTextItem* text;
 		
 		void positionChildren();
@@ -18,6 +19,7 @@ class FileItem : public QGraphicsRectItem{
 		FileItem( AFileItem* file, QGraphicsItem* parent=nullptr );
 		int64_t mass();
 		void initChildren();
+		QRectF availableArea() const;
 		
 		void setSize( QRectF new_size );
 };

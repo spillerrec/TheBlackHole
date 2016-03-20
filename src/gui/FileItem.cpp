@@ -9,25 +9,35 @@
 #include <QGraphicsTextItem>
 
 FileItem::FileItem( AFileItem* file, QGraphicsItem* parent ) : QGraphicsRectItem(parent), file(file) {
-	auto color = file->isFolder() ? QColor( 255,255,000, 128 ) : QColor( 0,0,255, 128 );
+	auto color = file->isFolder() ? QColor( 255,255,000, 64 ) : QColor( 0,0,255, 128 );
 	setBrush( QBrush( color ) );
 	text = new QGraphicsTextItem( file->name(), this );
 	setFlags( QGraphicsItem::ItemClipsChildrenToShape );
 }
 
 void FileItem::initChildren(){
-	for( auto& child : children ) delete child;
 	children.clear();
 	children.reserve( file->childrenCount() );
 	for( int i=0; i<file->childrenCount(); i++ )
-		children.push_back( new FileItem( &file->getChild(i), this ) );
-	
-	positionChildren();
+		children.push_back( std::make_unique<FileItem>(&file->getChild(i), this) );
 }
 
 void FileItem::setSize( QRectF new_size ){
 	setRect( new_size );
 	text->setPos( new_size.topLeft() );
+	
+	if( new_size.width() * new_size.height() > 5000 )
+		initChildren();
+	else
+		children.clear();
+	positionChildren();
+}
+
+QRectF FileItem::availableArea() const{
+	auto reserved = text->boundingRect().height();
+	auto pos = QPointF( rect().left(), rect().top() + reserved );
+	auto size = QSizeF( rect().width(), rect().height() - reserved );
+	return QRectF( pos, size );
 }
 
 
@@ -97,15 +107,13 @@ class Positioner{
 
 void FileItem::positionChildren(){
 	text->setPos( rect().topLeft() );
-	auto reserved = text->boundingRect().height();
 	
-	auto biggest_first = [](auto a, auto b){ return a->mass() > b->mass(); };
+	auto biggest_first = [](auto& a, auto& b){ return a->mass() > b->mass(); };
 	std::sort( children.begin(), children.end(), biggest_first );
 	
-	auto available = QRectF( rect().left(), rect().top() + reserved, rect().width(), rect().height() );
-	Positioner positioner( available, file->getTotalSize() );
-	for( auto child : children )
-		positioner.addChild( child );
+	Positioner positioner( availableArea(), file->getTotalSize() );
+	for( auto& child : children )
+		positioner.addChild( child.get() );
 }
 
 int64_t FileItem::mass(){ return file->getTotalSize(); }
