@@ -22,7 +22,7 @@ class FileItem{
 		FileItem( AFileItem* file );
 		int64_t mass();
 		void initChildren();
-		QRectF availableArea() const;
+		QRect availableArea() const;
 		
 		void setSize( QRect new_size );
 		void paint( QPainter& painter, QRect region );

@@ -32,7 +32,7 @@ void FileItem::initChildren(){
 void FileItem::setSize( QRect new_size ){
 	position = new_size;
 	
-	if( new_size.width() * new_size.height() > 5000 ){
+	if( new_size.width() * new_size.height() > 50000 ){
 		if( children.size() == 0 )
 			initChildren();
 	}
@@ -42,11 +42,11 @@ void FileItem::setSize( QRect new_size ){
 	positionChildren();
 }
 
-QRectF FileItem::availableArea() const{
+QRect FileItem::availableArea() const{
 	auto reserved = text.size().height();
-	auto pos = QPointF( position.left(),  position.top()    + reserved );
-	auto size = QSizeF( position.width(), position.height() - reserved );
-	return QRectF( pos, size );
+	auto pos = QPoint( position.left() +2,  position.top()   + reserved+2 );
+	auto size = QSize( position.width()-4, position.height() - reserved-4 );
+	return { pos, size };
 }
 
 
@@ -130,16 +130,22 @@ int64_t FileItem::mass(){ return file->getTotalSize(); }
 
 
 void FileItem::paint( QPainter& painter, QRect region ){
-	//TODO:
-	painter.setClipRect( position );
-	auto minSize = text.size().height();
-	if( position.width() > minSize/2 && position.height() > minSize*0.66 )
-		painter.drawStaticText( position.topLeft(), text );
+	if( position.width() == 0 || position.height() == 0 )
+		return; //TODO: Fixes a strange rendering bug, figure out why exactly this happens
 	
+	painter.setClipRect( position.x(), position.y(), position.width()+1, position.height()+1 );
 	auto color = file->isFolder() ? QColor( 255,255,000, 64 ) : QColor( 0,0,255, 128 );
 	painter.setBrush( { color } );
+//	painter.setPen( { QColor::fromHsv( qrand()/(RAND_MAX/255), 255, 255 ) } );
 	painter.drawRect( position );
 //	qDebug( "painted %d %d %d %d", position.x(), position.y(), position.width(), position.height() );
+	
+	//TODO:
+	painter.setClipRect( position.x(), position.y(), position.width()-2, position.height()-2 );
+	auto minSize = text.size().height();
+	if( position.width() > minSize/2 && position.height() > minSize*0.66 )
+		painter.drawStaticText( position.x() + 3, position.y(), text );
+	painter.setClipping( false );
 	
 	for( auto& child : children )
 		child.paint( painter, child.position );
