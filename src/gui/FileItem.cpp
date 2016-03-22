@@ -89,10 +89,16 @@ class Positioner{
 		/** Reszises the column, and moves to the next */
 		void commit(){
 			auto width = columnWidth();
+			int i_x = std::round( current.x() );
+			int i_width = std::round( current.x() + width ) - i_x;
+			
 			double progress = current.y();
 			for( auto file : column ){
 				auto height = itemHeight( file->mass() );
-				file->setSize( {current.x(), progress, width, height} );
+				int i_y = std::round( progress );
+				int i_height = std::round( progress + height ) - i_y;
+				
+				file->setSize( {i_x, i_y, i_width, i_height} );
 				progress += height;
 			}
 			current.setX( current.x() + width );
@@ -126,7 +132,9 @@ int64_t FileItem::mass(){ return file->getTotalSize(); }
 void FileItem::paint( QPainter& painter, QRect region ){
 	//TODO:
 	painter.setClipRect( position );
-	painter.drawStaticText( position.topLeft(), text );
+	auto minSize = text.size().height();
+	if( position.width() > minSize/2 && position.height() > minSize*0.66 )
+		painter.drawStaticText( position.topLeft(), text );
 	
 	auto color = file->isFolder() ? QColor( 255,255,000, 64 ) : QColor( 0,0,255, 128 );
 	painter.setBrush( { color } );
