@@ -4,28 +4,30 @@
 #ifndef FILE_ITEM_HPP
 #define FILE_ITEM_HPP
 
-#include <QGraphicsRectItem>
+#include <QWidget>
+#include <QStaticText>
 #include <memory>
 
-class FileItem : public QGraphicsRectItem{
+class FileItem{
 	private:
 		class AFileItem* file;
-		std::vector<std::unique_ptr<FileItem>> children;
-		class QGraphicsTextItem* text{ nullptr };
+		std::vector<FileItem> children;
+		QStaticText text;
+		QRect position;
 		
 		void positionChildren();
 		
-	protected:
-		virtual void hoverEnterEvent( QGraphicsSceneHoverEvent* ) override;
-		virtual void hoverLeaveEvent( QGraphicsSceneHoverEvent* ) override;
 		
 	public:
-		FileItem( AFileItem* file, QGraphicsItem* parent=nullptr );
+		FileItem( AFileItem* file );
 		int64_t mass();
 		void initChildren();
 		QRectF availableArea() const;
 		
-		void setSize( QRectF new_size );
+		void setSize( QRect new_size );
+		void paint( QPainter& painter, QRect region );
+		
+		void setHover( bool enabled );
 };
 
 #endif

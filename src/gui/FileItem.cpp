@@ -5,47 +5,32 @@
 #include "../filesystem/AFileItem.hpp"
 
 #include <QBrush>
+#include <QPainter>
 #include <QColor>
 #include <QPen>
 #include <QGraphicsTextItem>
 
-FileItem::FileItem( AFileItem* file, QGraphicsItem* parent ) : QGraphicsRectItem(parent), file(file) {
-	setAcceptHoverEvents( true );
-	auto color = file->isFolder() ? QColor( 255,255,000, 64 ) : QColor( 0,0,255, 128 );
-	setBrush( QBrush( color ) );
-	setFlags( QGraphicsItem::ItemClipsChildrenToShape );
+FileItem::FileItem( AFileItem* file ) : file(file), text( file->name() ) {
+	
 }
 
-void FileItem::hoverEnterEvent( QGraphicsSceneHoverEvent* ) {
-	setPen( QPen( QBrush(Qt::black), children.size()>0 ? 3.0 : 2.0 ) );
-}
-
-void FileItem::hoverLeaveEvent( QGraphicsSceneHoverEvent* ) {
-	setPen( QPen( QBrush(Qt::black), children.size()>0 ? 2.0 : 1.0 ) );
+void setHover( bool enabled ){
+	//TODO:
+	
 }
 
 void FileItem::initChildren(){
 	children.clear();
 	children.reserve( file->childrenCount() );
 	for( int i=0; i<file->childrenCount(); i++ )
-		children.push_back( std::make_unique<FileItem>(&file->getChild(i), this) );
+		children.emplace_back( &file->getChild(i) );
 	
-	auto biggest_first = [](auto& a, auto& b){ return a->mass() > b->mass(); };
+	auto biggest_first = [](auto& a, auto& b){ return a.mass() > b.mass(); };
 	std::sort( children.begin(), children.end(), biggest_first );
 }
 
-void FileItem::setSize( QRectF new_size ){
-	setRect( new_size );
-	
-	if( new_size.height() > 20 ){
-		if( !text )
-			text = new QGraphicsTextItem( file->name(), this );
-		text->setPos( new_size.topLeft() );
-	}
-	else if( text ){
-		delete text;
-		text = nullptr;
-	}
+void FileItem::setSize( QRect new_size ){
+	position = new_size;
 	
 	if( new_size.width() * new_size.height() > 5000 ){
 		if( children.size() == 0 )
@@ -54,14 +39,13 @@ void FileItem::setSize( QRectF new_size ){
 	else
 		children.clear();
 	
-	setPen( QPen( QBrush(Qt::black), children.size()>0 ? 2.0 : 1.0 ) );
 	positionChildren();
 }
 
 QRectF FileItem::availableArea() const{
-	auto reserved = text ? text->boundingRect().height() : 0;
-	auto pos = QPointF( rect().left(), rect().top() + reserved );
-	auto size = QSizeF( rect().width(), rect().height() - reserved );
+	auto reserved = text.size().height();
+	auto pos = QPointF( position.left(),  position.top()    + reserved );
+	auto size = QSizeF( position.width(), position.height() - reserved );
 	return QRectF( pos, size );
 }
 
@@ -132,8 +116,23 @@ class Positioner{
 void FileItem::positionChildren(){
 	Positioner positioner( availableArea(), file->getTotalSize() );
 	for( auto& child : children )
-		positioner.addChild( child.get() );
+		positioner.addChild( &child );
 	positioner.commit();
 }
 
 int64_t FileItem::mass(){ return file->getTotalSize(); }
+
+
+void FileItem::paint( QPainter& painter, QRect region ){
+	//TODO:
+	painter.setClipRect( position );
+	painter.drawStaticText( position.topLeft(), text );
+	
+	auto color = file->isFolder() ? QColor( 255,255,000, 64 ) : QColor( 0,0,255, 128 );
+	painter.setBrush( { color } );
+	painter.drawRect( position );
+//	qDebug( "painted %d %d %d %d", position.x(), position.y(), position.width(), position.height() );
+	
+	for( auto& child : children )
+		child.paint( painter, child.position );
+}

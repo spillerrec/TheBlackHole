@@ -4,26 +4,23 @@
 #ifndef DIR_VIEW_HPP
 #define DIR_VIEW_HPP
 
-#include <QGraphicsView>
-#include <QGraphicsScene>
+#include <QWidget>
 
 #include "../filesystem/Directory.hpp"
 #include "FileItem.hpp"
 
-class DirView : public QGraphicsView{
+class DirView : public QWidget{
 	private:
-		QGraphicsScene scene;
 		Directory dir;
 		FileItem item;
-		
-		void updateScene();
 		
 	public:
 		DirView( QWidget* parent=nullptr );
 		void setPath( QString path );
 		
 	protected:
-		void resizeEvent( class QResizeEvent* ) override { updateScene(); }
+		void resizeEvent( QResizeEvent* ) override;
+		void paintEvent( QPaintEvent* ) override;
 };
 
 #endif

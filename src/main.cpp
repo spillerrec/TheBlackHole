@@ -16,8 +16,13 @@ int main( int argc, char* argv[] ){
 	auto args = app.arguments();
 	auto folder = (args.size() < 2 ) ? "" : args[1];
 	
+	/*
 	MainWindow w( folder );
 	w.show();
+	*/
+	DirView view;
+	view.setPath( folder );
+	view.show();
 	
 	/*
 	Directory dir( nullptr, folder );

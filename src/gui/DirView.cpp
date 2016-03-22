@@ -3,20 +3,24 @@
 
 #include "DirView.hpp"
 
+#include <QResizeEvent>
+#include <QPainter>
+
 DirView::DirView( QWidget* parent )
-	: QGraphicsView(parent), scene(this), dir( nullptr, QFileInfo() ), item(&dir) {
-//	scene.setBackgroundBrush(Qt::blue);
-	scene.addItem( &item );
-	setScene(&scene);
-}
+	: QWidget(parent), dir( nullptr, QFileInfo() ), item(&dir) { }
 
 void DirView::setPath( QString path ){
 	dir = Directory( nullptr, path );
 	dir.update();
-	updateScene();
+	
+	QResizeEvent event( size(), size() ); //NOTE: Not really nessesary
+	resizeEvent( &event );
 }
 
-void DirView::updateScene(){
-	scene.setSceneRect(  0,0, viewport()->width(), viewport()->height()  );
-	item.setSize(      { 0,0, viewport()->width(), viewport()->height() });
+void DirView::resizeEvent( QResizeEvent* )
+	{ item.setSize( { QPoint(0,0), size() } ); }
+
+void DirView::paintEvent( QPaintEvent* event ){
+	QPainter painter( this );
+	item.paint( painter, event->rect() );
 }
