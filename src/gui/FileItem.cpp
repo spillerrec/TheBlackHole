@@ -135,6 +135,7 @@ void FileItem::paint( QPainter& painter, QRect region ){
 	
 	painter.setClipRect( position.x(), position.y(), position.width()+1, position.height()+1 );
 	auto color = file->isFolder() ? QColor( 255,255,000, 64 ) : QColor( 0,0,255, 128 );
+	painter.setPen( QPen{ Qt::black } );
 	painter.setBrush( { color } );
 //	painter.setPen( { QColor::fromHsv( qrand()/(RAND_MAX/255), 255, 255 ) } );
 	painter.drawRect( position );
